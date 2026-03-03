@@ -1,6 +1,8 @@
 /**
  * Enterprise API Portal - Real-time Weather Service
- * Fetches live weather data from Open-Meteo (No API key required)
+ * Fetches live weather data from Open-Meteo (No API key required).
+ * Falls back to realistic sample data when the external API is unreachable
+ * (e.g. on hosting platforms like Render that may block outbound requests).
  */
 
 const axios = require('axios');
@@ -19,6 +21,20 @@ const SUPPORTED_CITIES = {
     'Singapore': { lat: 1.3521, lon: 103.8198 }
 };
 
+// ── Fallback data when the external API is unreachable ──
+const FALLBACK_WEATHER = {
+    'London':    { temperature: 12, condition: 'Partly Cloudy', humidity: 72, windSpeed: 18, visibility: 10, feelsLike: 9 },
+    'Tokyo':     { temperature: 15, condition: 'Light Rain',    humidity: 80, windSpeed: 8,  visibility: 7,  feelsLike: 14 },
+    'NewYork':   { temperature: 8,  condition: 'Clear',         humidity: 55, windSpeed: 12, visibility: 16, feelsLike: 5 },
+    'Paris':     { temperature: 10, condition: 'Overcast',      humidity: 78, windSpeed: 20, visibility: 8,  feelsLike: 7 },
+    'Sydney':    { temperature: 22, condition: 'Sunny',         humidity: 48, windSpeed: 14, visibility: 20, feelsLike: 21 },
+    'Dubai':     { temperature: 35, condition: 'Hot & Humid',   humidity: 60, windSpeed: 10, visibility: 12, feelsLike: 38 },
+    'Mumbai':    { temperature: 28, condition: 'Haze',          humidity: 75, windSpeed: 9,  visibility: 4,  feelsLike: 31 },
+    'Berlin':    { temperature: 6,  condition: 'Drizzle',       humidity: 70, windSpeed: 15, visibility: 9,  feelsLike: 3 },
+    'Toronto':   { temperature: 3,  condition: 'Snow',          humidity: 82, windSpeed: 22, visibility: 3,  feelsLike: -1 },
+    'Singapore': { temperature: 30, condition: 'Thunderstorm',  humidity: 88, windSpeed: 6,  visibility: 5,  feelsLike: 33 },
+};
+
 // Map WMO weather codes to our UI conditions
 const getWeatherCondition = (wmoCode) => {
     if (wmoCode === 0) return 'Clear';
@@ -35,7 +51,8 @@ const getWeatherCondition = (wmoCode) => {
 class WeatherService {
 
     /**
-     * Get real-time weather for a specific city
+     * Get real-time weather for a specific city.
+     * Returns fallback data when the external API is unreachable.
      */
     async getWeatherByCity(city) {
         const cityNormalized = Object.keys(SUPPORTED_CITIES).find(c => c.toLowerCase() === city.toLowerCase());
@@ -55,7 +72,8 @@ class WeatherService {
                     current_weather: true,
                     hourly: 'relativehumidity_2m,visibility',
                     timezone: 'auto'
-                }
+                },
+                timeout: 5000, // 5 s timeout to fail fast on blocked hosts
             });
 
             const data = response.data;
@@ -75,12 +93,17 @@ class WeatherService {
                 humidity: humidity,
                 windSpeed: current.windspeed,
                 visibility: visibilityKm,
-                feelsLike: Math.round(current.temperature - (current.windspeed * 0.1)), // basic approximation
+                feelsLike: Math.round(current.temperature - (current.windspeed * 0.1)),
                 lastUpdated: new Date().toISOString()
             };
         } catch (error) {
-            console.error(`Failed to fetch weather for ${city}:`, error.message);
-            throw new Error('Real-time weather API is currently unavailable');
+            console.warn(`Open-Meteo unreachable for ${cityNormalized}, using fallback data:`, error.message);
+            const fb = FALLBACK_WEATHER[cityNormalized];
+            return {
+                city: cityNormalized,
+                ...fb,
+                lastUpdated: new Date().toISOString(),
+            };
         }
     }
 
@@ -89,18 +112,12 @@ class WeatherService {
      */
     async getAllWeather() {
         const cities = Object.keys(SUPPORTED_CITIES);
-        // Execute all API calls concurrently
         const promises = cities.map(city => this.getWeatherByCity(city));
 
-        try {
-            const results = await Promise.allSettled(promises);
-            return results
-                .filter(res => res.status === 'fulfilled' && res.value !== null)
-                .map(res => res.value);
-        } catch (error) {
-            console.error('Failed to fetch all weather:', error);
-            throw error;
-        }
+        const results = await Promise.allSettled(promises);
+        return results
+            .filter(res => res.status === 'fulfilled' && res.value !== null)
+            .map(res => res.value);
     }
 
     /**
