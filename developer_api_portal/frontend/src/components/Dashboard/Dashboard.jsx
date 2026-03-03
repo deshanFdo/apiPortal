@@ -103,7 +103,7 @@ const Dashboard = () => {
             </div>
 
             {/* ── Tab Navigation ── */}
-            {isDemoMode && (
+            {isDemoMode && import.meta.env.DEV && (
                 <div className="dashboard__demo-banner">
                     📡 Demo Mode — Showing sample data. Start the backend for live data.
                 </div>
