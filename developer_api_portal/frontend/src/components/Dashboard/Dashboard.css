@@ -4,8 +4,8 @@
    ═══════════════════════════════════════════════════════════════════════════ */
 
 .dashboard {
-    padding: 1.5rem 2rem;
-    max-width: 1400px;
+    padding: 1rem 1.5rem;
+    max-width: 1600px;
     margin: 0 auto;
 }
 
@@ -15,11 +15,11 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 1.25rem;
+    margin-bottom: 0.75rem;
 }
 
 .dashboard__heading {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     font-weight: 700;
     color: #f1f5f9;
     margin: 0;
@@ -58,19 +58,19 @@
 
 .dashboard__tabs {
     display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
+    gap: 0.25rem;
+    margin-bottom: 0.75rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     padding-bottom: 0;
 }
 
 .dashboard__tab {
-    padding: 0.65rem 1.3rem;
+    padding: 0.5rem 1.1rem;
     background: transparent;
     border: none;
     border-bottom: 2px solid transparent;
     color: #94a3b8;
-    font-size: 0.9rem;
+    font-size: 0.82rem;
     font-weight: 600;
     cursor: pointer;
     font-family: 'Inter', sans-serif;
@@ -89,7 +89,7 @@
 }
 
 .dashboard__endpoint-bar {
-    margin-bottom: 1.25rem;
+    margin-bottom: 0.75rem;
 }
 
 .dashboard__endpoint {
@@ -105,26 +105,26 @@
 /* ── Tab Content ── */
 
 .dashboard__tab-content {
-    min-height: 300px;
+    min-height: 200px;
 }
 
 /* ── Card Grids ── */
 
 .dashboard__grid {
     display: grid;
-    gap: 1rem;
+    gap: 0.75rem;
 }
 
 .dashboard__grid--weather {
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-template-columns: repeat(5, 1fr);
 }
 
 .dashboard__grid--stocks {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
 }
 
 .dashboard__grid--crypto {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(5, 1fr);
 }
 
 /* ── Demo Mode Banner ── */
@@ -219,19 +219,42 @@
 
 /* ── Responsive ── */
 
+@media (max-width: 1200px) {
+    .dashboard__grid--weather {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .dashboard__grid--stocks {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .dashboard__grid--crypto {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
 @media (max-width: 768px) {
     .dashboard {
-        padding: 1rem;
+        padding: 0.75rem;
     }
 
     .dashboard__toolbar {
         flex-direction: column;
         align-items: flex-start;
-        gap: 1rem;
+        gap: 0.5rem;
     }
 
     .dashboard__grid--weather,
-    .dashboard__grid--stocks {
+    .dashboard__grid--stocks,
+    .dashboard__grid--crypto {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard__grid--weather,
+    .dashboard__grid--stocks,
+    .dashboard__grid--crypto {
         grid-template-columns: 1fr;
     }
 }

@@ -7,15 +7,15 @@
     position: relative;
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 16px;
-    padding: 1.25rem 1.5rem;
+    border-radius: 12px;
+    padding: 0.8rem 1rem;
     overflow: hidden;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .crypto-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 40px rgba(139, 92, 246, 0.15);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(139, 92, 246, 0.15);
     border-color: rgba(139, 92, 246, 0.2);
 }
 
@@ -23,11 +23,11 @@
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
 }
 
 .crypto-symbol {
-    font-size: 1.15rem;
+    font-size: 0.95rem;
     font-weight: 700;
     color: #f1f5f9;
     margin: 0;
@@ -35,15 +35,15 @@
 }
 
 .crypto-name {
-    font-size: 0.75rem;
+    font-size: 0.65rem;
     color: #94a3b8;
     display: block;
-    margin-top: 0.15rem;
+    margin-top: 0.1rem;
 }
 
 .crypto-badge {
-    font-size: 0.68rem;
-    padding: 0.25rem 0.6rem;
+    font-size: 0.6rem;
+    padding: 0.15rem 0.45rem;
     border-radius: 999px;
     background: rgba(139, 92, 246, 0.1);
     color: #a78bfa;
@@ -56,11 +56,11 @@
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
 }
 
 .crypto-price {
-    font-size: 1.8rem;
+    font-size: 1.35rem;
     font-weight: 800;
     color: #f1f5f9;
     letter-spacing: -0.02em;
@@ -69,11 +69,11 @@
 .crypto-trend {
     display: flex;
     align-items: center;
-    gap: 0.3rem;
-    font-size: 0.82rem;
+    gap: 0.2rem;
+    font-size: 0.7rem;
     font-weight: 600;
-    padding: 0.3rem 0.6rem;
-    border-radius: 8px;
+    padding: 0.2rem 0.45rem;
+    border-radius: 6px;
 }
 
 .crypto-trend.trend-up {
@@ -90,16 +90,16 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-top: 0.75rem;
+    padding-top: 0.4rem;
     border-top: 1px solid rgba(255, 255, 255, 0.06);
-    font-size: 0.78rem;
+    font-size: 0.7rem;
 }
 
 .crypto-meta span:first-child {
     color: #64748b;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    font-size: 0.7rem;
+    font-size: 0.6rem;
 }
 
 .crypto-meta span:last-child {
