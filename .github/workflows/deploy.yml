@@ -37,6 +37,8 @@ jobs:
 
       - run: npm ci
       - run: npm run build
+        env:
+          VITE_API_BASE_URL: https://api-portal-2maq.onrender.com/api/v1
 
       - name: Deploy to gh-pages branch
         uses: peaceiris/actions-gh-pages@v4

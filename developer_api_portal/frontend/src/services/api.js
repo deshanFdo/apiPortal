@@ -7,8 +7,9 @@
  * (e.g. when hosted on GitHub Pages as a static site).
  */
 
-// Base URL — uses Vite proxy in development, so we just use /api/v1
-const API_BASE = '/api/v1';
+// Base URL — in dev the Vite proxy forwards /api to localhost:3000.
+// In production (GitHub Pages) VITE_API_BASE_URL points to the Render backend.
+const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api/v1';
 
 /**
  * Generic fetch wrapper with error handling.
