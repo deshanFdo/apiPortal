@@ -14,6 +14,16 @@ const App = () => {
         <div className="app">
             <Header />
             <Dashboard />
+            <footer className="app-footer">
+                Built by{' '}
+                <a
+                    href="https://github.com/deshanFdo"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    @deshanFdo
+                </a>
+            </footer>
         </div>
     );
 };

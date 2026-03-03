@@ -38,6 +38,7 @@ const DEMO_WEATHER = [
     { city: 'Mumbai', temperature: '28°C', feelsLike: '31°C', condition: 'Haze', humidity: '75%', windSpeed: '9 km/h', visibility: '4 km', icon: '🌫️' },
     { city: 'Toronto', temperature: '3°C', feelsLike: '-1°C', condition: 'Snow', humidity: '82%', windSpeed: '22 km/h', visibility: '3 km', icon: '🌨️' },
     { city: 'Berlin', temperature: '6°C', feelsLike: '3°C', condition: 'Drizzle', humidity: '70%', windSpeed: '15 km/h', visibility: '9 km', icon: '🌦️' },
+    { city: 'Colombo', temperature: '29°C', feelsLike: '32°C', condition: 'Partly cloudy', humidity: '78%', windSpeed: '12 km/h', visibility: '8 km', icon: '⛅' },
 ];
 
 const DEMO_STOCKS = [
