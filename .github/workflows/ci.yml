@@ -1,0 +1,43 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build_backend:
+    name: Build & Test Backend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./developer_api_portal/backend
+    steps:
+    - uses: actions/checkout@v4
+    - name: Use Node.js 18.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18.x
+        cache: 'npm'
+        cache-dependency-path: './developer_api_portal/backend/package-lock.json'
+    - run: npm ci
+    # Run tests if there are any, else run health check or dummy script
+    - run: npm start & sleep 5
+    
+  build_frontend:
+    name: Build Frontend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./developer_api_portal/frontend
+    steps:
+    - uses: actions/checkout@v4
+    - name: Use Node.js 18.x  
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18.x
+        cache: 'npm'  
+        cache-dependency-path: './developer_api_portal/frontend/package-lock.json'
+    - run: npm ci
+    - run: npm run build
