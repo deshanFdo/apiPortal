@@ -64,7 +64,7 @@ developer_api_portal/
 │   │   └── services/                 # Business logic + external API calls
 │   ├── server.js                     # Entry point
 │   ├── Dockerfile                    # Container config for Docker Compose
-│   └── .env                          # Environment config
+│   └── .env.example                  # Environment template
 │   └── package.json
 │
 ├── frontend/                         # React Dashboard
@@ -72,7 +72,7 @@ developer_api_portal/
 │   │   ├── components/               # Header, Dashboard, Cards
 │   │   ├── services/                 # API client layer
 │   │   └── styles/                   # Global styles
-│   ├── .env                          # Environment config
+│   ├── .env.example                  # Environment template
 │   └── package.json
 │
 └── wso2-gateway/                     # WSO2 API Manager Setup
@@ -102,10 +102,12 @@ cd apiPortal/developer_api_portal
 
 # Backend
 cd backend
+cp .env.example .env
 npm install
 
 # Frontend
 cd ../frontend
+cp .env.example .env
 npm install
 ```
 
