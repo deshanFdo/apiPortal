@@ -1,73 +1,114 @@
 /**
- * ============================================================================
- * WEATHER SERVICE
- * ============================================================================
- * Business logic layer for weather data.
- *
- * Currently uses a comprehensive local dataset. In production, this service
- * would integrate with a real weather provider (e.g., OpenWeatherMap API)
- * by swapping the data source — the controller and routes remain untouched.
+ * Enterprise API Portal - Real-time Weather Service
+ * Fetches live weather data from Open-Meteo (No API key required)
  */
 
-// ── Local weather dataset (simulates a database or external API) ──
-const weatherDatabase = {
-    London: { temp: 15, feelsLike: 12, condition: 'Cloudy', humidity: 80, windSpeed: 18, visibility: 10, icon: '☁️' },
-    Tokyo: { temp: 22, feelsLike: 24, condition: 'Clear', humidity: 55, windSpeed: 8, visibility: 16, icon: '☀️' },
-    NewYork: { temp: 18, feelsLike: 16, condition: 'Rain', humidity: 65, windSpeed: 22, visibility: 7, icon: '🌧️' },
-    Paris: { temp: 14, feelsLike: 11, condition: 'Partly Cloudy', humidity: 72, windSpeed: 15, visibility: 12, icon: '⛅' },
-    Sydney: { temp: 28, feelsLike: 30, condition: 'Sunny', humidity: 45, windSpeed: 12, visibility: 20, icon: '☀️' },
-    Dubai: { temp: 38, feelsLike: 42, condition: 'Hot', humidity: 30, windSpeed: 10, visibility: 15, icon: '🔥' },
-    Mumbai: { temp: 32, feelsLike: 36, condition: 'Humid', humidity: 85, windSpeed: 14, visibility: 8, icon: '🌫️' },
-    Berlin: { temp: 10, feelsLike: 7, condition: 'Overcast', humidity: 78, windSpeed: 20, visibility: 9, icon: '☁️' },
-    Toronto: { temp: -2, feelsLike: -8, condition: 'Snow', humidity: 90, windSpeed: 25, visibility: 4, icon: '❄️' },
-    Singapore: { temp: 30, feelsLike: 34, condition: 'Thunderstorm', humidity: 88, windSpeed: 16, visibility: 6, icon: '⛈️' },
+const axios = require('axios');
+
+// Supported cities with their coordinates
+const SUPPORTED_CITIES = {
+    'London': { lat: 51.5085, lon: -0.1257 },
+    'Tokyo': { lat: 35.6895, lon: 139.6917 },
+    'NewYork': { lat: 40.7128, lon: -74.0060 },
+    'Paris': { lat: 48.8566, lon: 2.3522 },
+    'Sydney': { lat: -33.8688, lon: 151.2093 },
+    'Dubai': { lat: 25.2048, lon: 55.2708 },
+    'Mumbai': { lat: 19.0760, lon: 72.8777 },
+    'Berlin': { lat: 52.5200, lon: 13.4050 },
+    'Toronto': { lat: 43.7001, lon: -79.4163 },
+    'Singapore': { lat: 1.3521, lon: 103.8198 }
 };
 
-/**
- * Fetches weather data for a specific city.
- * @param {string} city - The city name to look up.
- * @returns {object} Weather data for the requested city.
- */
-const getWeatherByCity = (city) => {
-    const data = weatherDatabase[city];
+// Map WMO weather codes to our UI conditions
+const getWeatherCondition = (wmoCode) => {
+    if (wmoCode === 0) return 'Clear';
+    if (wmoCode >= 1 && wmoCode <= 3) return wmoCode === 1 ? 'Mostly Clear' : wmoCode === 2 ? 'Partly Cloudy' : 'Cloudy';
+    if (wmoCode >= 45 && wmoCode <= 48) return 'Fog';
+    if (wmoCode >= 51 && wmoCode <= 67) return 'Rain';
+    if (wmoCode >= 71 && wmoCode <= 77) return 'Snow';
+    if (wmoCode >= 80 && wmoCode <= 82) return 'Rain Showers';
+    if (wmoCode >= 85 && wmoCode <= 86) return 'Snow Showers';
+    if (wmoCode >= 95 && wmoCode <= 99) return 'Thunderstorm';
+    return 'Unknown';
+};
 
-    if (!data) {
-        const error = new Error(`City "${city}" not found. Available cities: ${Object.keys(weatherDatabase).join(', ')}`);
-        error.statusCode = 404;
-        throw error;
+class WeatherService {
+
+    /**
+     * Get real-time weather for a specific city
+     */
+    async getWeatherByCity(city) {
+        const cityNormalized = Object.keys(SUPPORTED_CITIES).find(c => c.toLowerCase() === city.toLowerCase());
+
+        if (!cityNormalized) {
+            return null; // City not supported
+        }
+
+        const coords = SUPPORTED_CITIES[cityNormalized];
+
+        try {
+            // Fetch live data from Open-Meteo
+            const response = await axios.get(`https://api.open-meteo.com/v1/forecast`, {
+                params: {
+                    latitude: coords.lat,
+                    longitude: coords.lon,
+                    current_weather: true,
+                    hourly: 'relativehumidity_2m,visibility',
+                    timezone: 'auto'
+                }
+            });
+
+            const data = response.data;
+            const current = data.current_weather;
+
+            // Extract current humidity & visibility from hourly array based on current time
+            const currentTimeStr = current.time;
+            const timeIndex = data.hourly.time.indexOf(currentTimeStr);
+
+            const humidity = timeIndex !== -1 ? data.hourly.relativehumidity_2m[timeIndex] : 60;
+            const visibilityKm = timeIndex !== -1 ? Math.round(data.hourly.visibility[timeIndex] / 1000) : 10;
+
+            return {
+                city: cityNormalized,
+                temperature: current.temperature,
+                condition: getWeatherCondition(current.weathercode),
+                humidity: humidity,
+                windSpeed: current.windspeed,
+                visibility: visibilityKm,
+                feelsLike: Math.round(current.temperature - (current.windspeed * 0.1)), // basic approximation
+                lastUpdated: new Date().toISOString()
+            };
+        } catch (error) {
+            console.error(`Failed to fetch weather for ${city}:`, error.message);
+            throw new Error('Real-time weather API is currently unavailable');
+        }
     }
 
-    return {
-        city,
-        temperature: `${data.temp}°C`,
-        feelsLike: `${data.feelsLike}°C`,
-        condition: data.condition,
-        humidity: `${data.humidity}%`,
-        windSpeed: `${data.windSpeed} km/h`,
-        visibility: `${data.visibility} km`,
-        icon: data.icon,
-        updatedAt: new Date().toISOString(),
-    };
-};
+    /**
+     * Get real-time weather for all supported cities in parallel
+     */
+    async getAllWeather() {
+        const cities = Object.keys(SUPPORTED_CITIES);
+        // Execute all API calls concurrently
+        const promises = cities.map(city => this.getWeatherByCity(city));
 
-/**
- * Fetches weather data for ALL available cities.
- * @returns {Array<object>} Array of weather objects for every city.
- */
-const getAllWeather = () => {
-    return Object.keys(weatherDatabase).map((city) => getWeatherByCity(city));
-};
+        try {
+            const results = await Promise.allSettled(promises);
+            return results
+                .filter(res => res.status === 'fulfilled' && res.value !== null)
+                .map(res => res.value);
+        } catch (error) {
+            console.error('Failed to fetch all weather:', error);
+            throw error;
+        }
+    }
 
-/**
- * Returns the list of supported city names.
- * @returns {string[]} Array of city name strings.
- */
-const getSupportedCities = () => {
-    return Object.keys(weatherDatabase);
-};
+    /**
+     * Get list of supported cities
+     */
+    getSupportedCities() {
+        return Object.keys(SUPPORTED_CITIES);
+    }
+}
 
-module.exports = {
-    getWeatherByCity,
-    getAllWeather,
-    getSupportedCities,
-};
+module.exports = new WeatherService();
