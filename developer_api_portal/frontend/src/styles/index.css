@@ -21,9 +21,9 @@
 :root {
     --bg-primary: #0a0a14;
     --bg-secondary: #0f0f1a;
-    --text-primary: #f1f5f9;
-    --text-secondary: #94a3b8;
-    --text-muted: #64748b;
+    --text-primary: #ffffff;
+    --text-secondary: #e0e0e0;
+    --text-muted: #b0b0b0;
     --accent-primary: #6366f1;
     --accent-secondary: #8b5cf6;
     --border-subtle: rgba(255, 255, 255, 0.06);

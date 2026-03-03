@@ -18,6 +18,7 @@ const errorHandler = require('./middleware/errorHandler');
 // ── Route modules ──
 const weatherRoutes = require('./routes/weather.routes');
 const stocksRoutes = require('./routes/stocks.routes');
+const cryptoRoutes = require('./routes/crypto.routes');
 
 // ── Initialize Express ──
 const app = express();
