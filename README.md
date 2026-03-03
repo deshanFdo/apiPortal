@@ -2,7 +2,11 @@
 
 A production-grade **API Management platform** built with **WSO2 API Manager**, **Node.js/Express**, and **React**. Demonstrates how enterprises expose, secure, and manage APIs through WSO2's product ecosystem.
 
-> **Live Demo:** [https://deshanfdo.github.io/apiPortal/](https://deshanfdo.github.io/apiPortal/)
+> **Live Demo (Full-Stack):** Deploy your own on Render with the button below
+>
+> [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/deshanFdo/apiPortal)
+>
+> **Static Demo (Frontend Only):** [https://deshanfdo.github.io/apiPortal/](https://deshanfdo.github.io/apiPortal/)
 
 ## Key Features
 

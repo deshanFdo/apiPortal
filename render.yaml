@@ -1,0 +1,24 @@
+# ============================================================================
+# Render Blueprint — One-click deploy
+# ============================================================================
+# Deploys the full-stack app (Express backend + React frontend) as a
+# single free Web Service on Render.
+#
+# Usage: Click "New → Blueprint" in Render dashboard and connect this repo.
+# Or use the Deploy to Render button in the README.
+
+services:
+  - type: web
+    name: api-portal
+    runtime: node
+    plan: free
+    rootDir: developer_api_portal
+    buildCommand: cd frontend && npm install && DEPLOY_TARGET=render npm run build && cd ../backend && npm install
+    startCommand: cd backend && node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: CORS_ORIGIN
+        value: "*"

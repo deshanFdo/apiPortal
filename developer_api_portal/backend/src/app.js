@@ -9,6 +9,7 @@
 
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const config = require('./config');
 
 // ── Middleware ──
@@ -36,7 +37,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Enable CORS for frontend communication
 app.use(cors({
-    origin: config.CORS_ORIGIN,
+    origin: config.CORS_ORIGIN === '*' ? true : config.CORS_ORIGIN,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
 }));
@@ -67,6 +68,26 @@ app.get(`${config.API_PREFIX}/health`, (req, res) => {
 app.use(`${config.API_PREFIX}/weather`, weatherRoutes);
 app.use(`${config.API_PREFIX}/stocks`, stocksRoutes);
 app.use(`${config.API_PREFIX}/crypto`, cryptoRoutes);
+
+// ────────────────────────────────────────────────────────────────────────────
+// STATIC FRONTEND (production — serves the React build)
+// ────────────────────────────────────────────────────────────────────────────
+const frontendDist = path.join(__dirname, '../../frontend/dist');
+app.use(express.static(frontendDist));
+
+// ────────────────────────────────────────────────────────────────────────────
+// SPA FALLBACK — any non-API route serves index.html so React Router works
+// ────────────────────────────────────────────────────────────────────────────
+app.use((req, res, next) => {
+    // If the request is for an API route, fall through to the 404 handler
+    if (req.originalUrl.startsWith('/api/')) {
+        return next();
+    }
+    const indexPath = path.join(frontendDist, 'index.html');
+    res.sendFile(indexPath, (err) => {
+        if (err) next();  // If index.html doesn't exist, fall through to 404
+    });
+});
 
 // ────────────────────────────────────────────────────────────────────────────
 // 404 HANDLER (must come after all valid routes)
