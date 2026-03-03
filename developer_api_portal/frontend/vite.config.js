@@ -3,13 +3,13 @@ import react from '@vitejs/plugin-react';
 
 /**
  * Vite Configuration
+ * - In production: sets base to /apiPortal/ for GitHub Pages
+ * - In dev: base stays / so local dev works normally
  * - Proxies /api requests to the backend server (port 3000)
- *   so the frontend doesn't need to know the backend URL.
- * - Sets base path for GitHub Pages deployment.
  */
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
     plugins: [react()],
-    base: '/apiPortal/',
+    base: mode === 'production' ? '/apiPortal/' : '/',
     server: {
         port: 5173,
         proxy: {
@@ -19,4 +19,4 @@ export default defineConfig({
             },
         },
     },
-});
+}));
