@@ -2,7 +2,7 @@
  * ============================================================================
  * WSO2 JWT VALIDATION MIDDLEWARE
  * ============================================================================
- * Validates JWT tokens issued by WSO2 API Manager or WSO2 Asgardeo.
+ * Validates JWT tokens issued by WSO2 API Manager.
  *
  * When requests come through the WSO2 API Gateway, the gateway appends a
  * signed JWT in the X-JWT-Assertion header. This middleware:
@@ -77,7 +77,7 @@ const wso2JwtValidator = (req, res, next) => {
                 success: false,
                 error: {
                     message: 'Token has expired',
-                    hint: 'Request a new token from WSO2 API Manager or Asgardeo',
+                    hint: 'Request a new token from WSO2 API Manager',
                 },
             });
         }

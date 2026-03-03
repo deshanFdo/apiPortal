@@ -1,11 +1,10 @@
 # Enterprise Developer API Portal
 
-A production-grade **API Management platform** built with **WSO2 API Manager**, **WSO2 Asgardeo**, **Node.js/Express**, and **React**. Demonstrates how enterprises expose, secure, and manage APIs through WSO2's product ecosystem.
+A production-grade **API Management platform** built with **WSO2 API Manager**, **Node.js/Express**, and **React**. Demonstrates how enterprises expose, secure, and manage APIs through WSO2's product ecosystem.
 
 ## Key Features
 
 - **API Gateway** — All API traffic routed through WSO2 API Manager with OAuth2, rate limiting, and analytics
-- **Identity Management** — User authentication via WSO2 Asgardeo (OpenID Connect / OAuth2)
 - **Developer Portal** — Built-in WSO2 portal for API discovery, subscription, and token generation
 - **Live Data** — Real-time Weather (Open-Meteo), Stock (Yahoo Finance), and Crypto (CoinGecko) APIs
 - **Containerized** — One-command Docker Compose setup for the entire WSO2 + backend stack
@@ -16,12 +15,6 @@ A production-grade **API Management platform** built with **WSO2 API Manager**, 
 ## Architecture
 
 ```
-                        +----------------------+
-                        |   WSO2 Asgardeo      |
-                        |  (Identity Provider)  |
-                        +----------+-----------+
-                                   | OAuth2 / OpenID Connect
-                                   v
   React Frontend --> WSO2 API Gateway --> Express Backend APIs
   (Dashboard)        (Rate Limiting,       (Weather, Stock, Crypto)
                       JWT Validation,
@@ -29,9 +22,8 @@ A production-grade **API Management platform** built with **WSO2 API Manager**, 
 ```
 
 | Layer | Technology | Purpose |
-|-------|-----------|---------|
+|-------|-----------|---------||
 | **Frontend** | React 19 + Vite | Dashboard to visualize API data |
-| **Identity** | WSO2 Asgardeo | OAuth2 / OpenID Connect authentication |
 | **Gateway** | WSO2 API Manager 4.3 | JWT validation, rate limiting, API publishing, developer portal |
 | **Backend** | Node.js + Express | RESTful APIs (Weather, Stock, Crypto) |
 
@@ -46,11 +38,6 @@ A production-grade **API Management platform** built with **WSO2 API Manager**, 
 - **JWT Token Validation** - Backend validates X-JWT-Assertion headers from the gateway
 - **Throttling Tiers** - Bronze (5 req/min), Silver (20 req/min), Gold (50 req/min)
 - **OpenAPI Definitions** - All 3 APIs have OpenAPI 3.0 specs for import into WSO2 Publisher
-
-### WSO2 Asgardeo (Identity as a Service)
-- **Single Sign-On** - Users authenticate via Asgardeo's hosted login page
-- **OAuth2 + OIDC** - Frontend uses `@asgardeo/auth-react` SDK for token management
-- **User Management** - Manage users, roles, and permissions in Asgardeo console
 
 ---
 
@@ -75,8 +62,6 @@ developer_api_portal/
 │
 ├── frontend/                         # React Dashboard
 │   ├── src/
-│   │   ├── config/
-│   │   │   └── asgardeo.js           # WSO2 Asgardeo auth config
 │   │   ├── components/               # Header, Dashboard, Cards
 │   │   ├── services/                 # API client layer
 │   │   └── styles/                   # Global styles
@@ -101,7 +86,6 @@ developer_api_portal/
 
 - **Node.js** v18+ ([Download](https://nodejs.org/))
 - **Docker** (for WSO2 API Manager) ([Download](https://www.docker.com/products/docker-desktop/))
-- **WSO2 Asgardeo account** (free) - [Sign up](https://asgardeo.io)
 
 ### 1. Clone and Install
 
@@ -120,19 +104,7 @@ cp .env.example .env
 npm install
 ```
 
-### 2. Configure WSO2 Asgardeo
-
-1. Go to [Asgardeo Console](https://console.asgardeo.io)
-2. Create a **Single-Page Application**
-3. Set **Authorized Redirect URL** to `http://localhost:5173`
-4. Copy the **Client ID** and **Organization Name**
-5. Update `frontend/.env`:
-   ```
-   VITE_ASGARDEO_CLIENT_ID=<your-client-id>
-   VITE_ASGARDEO_ORG_NAME=<your-org-name>
-   ```
-
-### 3. Run Locally (without WSO2 Gateway)
+### 2. Run Locally (without WSO2 Gateway)
 
 ```bash
 # Terminal 1 - Backend (port 3000)
@@ -146,7 +118,7 @@ npm run dev
 
 Open **http://localhost:5173** in your browser.
 
-### 4. Run with WSO2 API Manager (Docker)
+### 3. Run with WSO2 API Manager (Docker)
 
 ```bash
 cd developer_api_portal/wso2-gateway
@@ -207,9 +179,8 @@ All endpoints are prefixed with `/api/v1`.
 | Category | Technology |
 |----------|-----------|
 | Backend | Node.js, Express.js, Axios |
-| Frontend | React 19, Vite 7, @asgardeo/auth-react |
+| Frontend | React 19, Vite 7 |
 | API Gateway | WSO2 API Manager 4.3 |
-| Identity | WSO2 Asgardeo (OAuth2 / OIDC) |
 | Containerization | Docker, Docker Compose |
 | Version Control | Git + GitHub |
 

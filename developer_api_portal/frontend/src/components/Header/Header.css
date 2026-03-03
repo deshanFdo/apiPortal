@@ -108,49 +108,4 @@
     50% { opacity: 0.4; }
 }
 
-/* ── Asgardeo Auth Controls ── */
 
-.header__user-area {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-.header__username {
-    font-size: 0.82rem;
-    color: #e2e8f0;
-    font-weight: 500;
-}
-
-.header__auth-btn {
-    padding: 0.45rem 1rem;
-    border-radius: 8px;
-    font-size: 0.78rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-family: 'Inter', sans-serif;
-    border: none;
-}
-
-.header__auth-btn--login {
-    background: linear-gradient(135deg, #f97316, #fb923c);
-    color: white;
-}
-
-.header__auth-btn--login:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.35);
-}
-
-.header__auth-btn--logout {
-    background: rgba(255, 255, 255, 0.06);
-    color: #94a3b8;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.header__auth-btn--logout:hover {
-    background: rgba(239, 68, 68, 0.1);
-    color: #f87171;
-    border-color: rgba(239, 68, 68, 0.2);
-}
