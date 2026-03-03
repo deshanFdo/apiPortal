@@ -14,6 +14,12 @@ import StockCard from '../StockCard/StockCard';
 import CryptoCard from '../CryptoCard/CryptoCard';
 import './Dashboard.css';
 
+const TABS = [
+    { id: 'weather', label: '🌦️ Weather', endpoint: 'GET /api/v1/weather/all' },
+    { id: 'stocks',  label: '📈 Stocks',  endpoint: 'GET /api/v1/stocks/all' },
+    { id: 'crypto',  label: '🪙 Crypto',  endpoint: 'GET /api/v1/crypto/all' },
+];
+
 const Dashboard = () => {
     // ── State ──
     const [weatherData, setWeatherData] = useState([]);
@@ -22,6 +28,8 @@ const Dashboard = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [lastUpdated, setLastUpdated] = useState(null);
+    const [activeTab, setActiveTab] = useState('weather');
+    const [isDemoMode, setIsDemoMode] = useState(false);
 
     /**
      * Fetches all data from both APIs simultaneously.
@@ -41,6 +49,7 @@ const Dashboard = () => {
             setWeatherData(weatherRes.data);
             setStockData(stockRes.data);
             setCryptoData(cryptoRes.data);
+            setIsDemoMode(!!(weatherRes._demo || stockRes._demo || cryptoRes._demo));
             setLastUpdated(new Date().toLocaleTimeString());
         } catch (err) {
             setError(err.message || 'Failed to fetch data. Is the backend running?');
@@ -80,7 +89,7 @@ const Dashboard = () => {
 
     return (
         <main className="dashboard">
-            {/* Section header with refresh control */}
+            {/* Toolbar: heading + refresh */}
             <div className="dashboard__toolbar">
                 <div>
                     <h2 className="dashboard__heading">Live API Dashboard</h2>
@@ -93,44 +102,57 @@ const Dashboard = () => {
                 </button>
             </div>
 
-            {/* ── Weather Section ── */}
-            <section className="dashboard__section">
-                <div className="dashboard__section-header">
-                    <h3 className="dashboard__section-title">🌦️ Weather API</h3>
-                    <span className="dashboard__endpoint">GET /api/v1/weather/all</span>
+            {/* ── Tab Navigation ── */}
+            {isDemoMode && (
+                <div className="dashboard__demo-banner">
+                    📡 Demo Mode — Showing sample data. Start the backend for live data.
                 </div>
-                <div className="dashboard__grid dashboard__grid--weather">
-                    {weatherData.map((item) => (
-                        <WeatherCard key={item.city} data={item} />
-                    ))}
-                </div>
-            </section>
+            )}
+            <div className="dashboard__tabs">
+                {TABS.map((tab) => (
+                    <button
+                        key={tab.id}
+                        className={`dashboard__tab ${activeTab === tab.id ? 'dashboard__tab--active' : ''}`}
+                        onClick={() => setActiveTab(tab.id)}
+                    >
+                        {tab.label}
+                    </button>
+                ))}
+            </div>
 
-            {/* ── Stocks Section ── */}
-            <section className="dashboard__section">
-                <div className="dashboard__section-header">
-                    <h3 className="dashboard__section-title">📈 Stock Alert API</h3>
-                    <span className="dashboard__endpoint">GET /api/v1/stocks/all</span>
-                </div>
-                <div className="dashboard__grid dashboard__grid--stocks">
-                    {stockData.map((item) => (
-                        <StockCard key={item.symbol} data={item} />
-                    ))}
-                </div>
-            </section>
+            {/* Endpoint badge for active tab */}
+            <div className="dashboard__endpoint-bar">
+                <span className="dashboard__endpoint">
+                    {TABS.find((t) => t.id === activeTab)?.endpoint}
+                </span>
+            </div>
 
-            {/* ── Crypto Section ── */}
-            <section className="dashboard__section">
-                <div className="dashboard__section-header">
-                    <h3 className="dashboard__section-title">🪙 Cryptocurrency API</h3>
-                    <span className="dashboard__endpoint">GET /api/v1/crypto/all</span>
-                </div>
-                <div className="dashboard__grid dashboard__grid--stocks">
-                    {cryptoData.map((item) => (
-                        <CryptoCard key={item.symbol} data={item} />
-                    ))}
-                </div>
-            </section>
+            {/* ── Tab Content ── */}
+            <div className="dashboard__tab-content">
+                {activeTab === 'weather' && (
+                    <div className="dashboard__grid dashboard__grid--weather">
+                        {weatherData.map((item) => (
+                            <WeatherCard key={item.city} data={item} />
+                        ))}
+                    </div>
+                )}
+
+                {activeTab === 'stocks' && (
+                    <div className="dashboard__grid dashboard__grid--stocks">
+                        {stockData.map((item) => (
+                            <StockCard key={item.symbol} data={item} />
+                        ))}
+                    </div>
+                )}
+
+                {activeTab === 'crypto' && (
+                    <div className="dashboard__grid dashboard__grid--crypto">
+                        {cryptoData.map((item) => (
+                            <CryptoCard key={item.symbol} data={item} />
+                        ))}
+                    </div>
+                )}
+            </div>
         </main>
     );
 };

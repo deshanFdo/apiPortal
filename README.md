@@ -2,11 +2,14 @@
 
 A production-grade **API Management platform** built with **WSO2 API Manager**, **Node.js/Express**, and **React**. Demonstrates how enterprises expose, secure, and manage APIs through WSO2's product ecosystem.
 
+> **Live Demo:** [https://deshanfdo.github.io/apiPortal/](https://deshanfdo.github.io/apiPortal/)
+
 ## Key Features
 
 - **API Gateway** — All API traffic routed through WSO2 API Manager with OAuth2, rate limiting, and analytics
 - **Developer Portal** — Built-in WSO2 portal for API discovery, subscription, and token generation
 - **Live Data** — Real-time Weather (Open-Meteo), Stock (Yahoo Finance), and Crypto (CoinGecko) APIs
+- **GitHub Pages** — Static frontend auto-deployed with demo data fallback
 - **Containerized** — One-command Docker Compose setup for the entire WSO2 + backend stack
 - **OpenAPI 3.0** — All APIs have importable OpenAPI specs for WSO2 Publisher
 
@@ -57,7 +60,7 @@ developer_api_portal/
 │   │   └── services/                 # Business logic + external API calls
 │   ├── server.js                     # Entry point
 │   ├── Dockerfile                    # Container config for Docker Compose
-│   ├── .env.example                  # Environment template
+│   └── .env                          # Environment config
 │   └── package.json
 │
 ├── frontend/                         # React Dashboard
@@ -65,7 +68,7 @@ developer_api_portal/
 │   │   ├── components/               # Header, Dashboard, Cards
 │   │   ├── services/                 # API client layer
 │   │   └── styles/                   # Global styles
-│   ├── .env.example                  # Environment template
+│   ├── .env                          # Environment config
 │   └── package.json
 │
 └── wso2-gateway/                     # WSO2 API Manager Setup
@@ -95,12 +98,10 @@ cd apiPortal/developer_api_portal
 
 # Backend
 cd backend
-cp .env.example .env
 npm install
 
 # Frontend
 cd ../frontend
-cp .env.example .env
 npm install
 ```
 
@@ -188,7 +189,7 @@ All endpoints are prefixed with `/api/v1`.
 
 ## Screenshots
 
-> Run the project locally and visit `http://localhost:5173` to see the dashboard.
+> Visit the **[Live Demo](https://deshanfdo.github.io/apiPortal/)** or run locally at `http://localhost:5173`.
 > WSO2 Publisher portal is at `https://localhost:9443/publisher` and DevPortal at `https://localhost:9443/devportal`.
 
 ---

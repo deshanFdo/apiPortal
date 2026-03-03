@@ -56,7 +56,6 @@ out/
 # ENVIRONMENT & SECRETS
 # ═══════════════════════════════════════════════════════════════════════════
 
-.env
 .env.local
 .env.*.local
 .env.test
