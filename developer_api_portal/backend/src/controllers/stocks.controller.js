@@ -14,7 +14,7 @@ const stockService = require('../services/stocks.service');
  * GET /api/v1/stocks?symbol=AAPL
  * Returns stock data for a single ticker symbol.
  */
-const getStock = (req, res, next) => {
+const getStock = async (req, res, next) => {
     try {
         const { symbol } = req.query;
 
@@ -25,7 +25,13 @@ const getStock = (req, res, next) => {
             throw error;
         }
 
-        const stockData = stockService.getStockBySymbol(symbol);
+        const stockData = await stockService.getStockBySymbol(symbol);
+
+        if (!stockData) {
+            const error = new Error(`Symbol "${symbol}" is not supported. Use GET /api/v1/stocks/symbols for available symbols.`);
+            error.statusCode = 404;
+            throw error;
+        }
 
         res.status(200).json({
             success: true,
@@ -40,9 +46,9 @@ const getStock = (req, res, next) => {
  * GET /api/v1/stocks/all
  * Returns stock data for every supported ticker.
  */
-const getAllStocks = (req, res, next) => {
+const getAllStocks = async (req, res, next) => {
     try {
-        const allStocks = stockService.getAllStocks();
+        const allStocks = await stockService.getAllStocks();
 
         res.status(200).json({
             success: true,

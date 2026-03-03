@@ -8,15 +8,17 @@
  */
 
 import { useState, useEffect } from 'react';
-import { getAllWeather, getAllStocks } from '../../services/api';
+import { getAllWeather, getAllStocks, getAllCrypto } from '../../services/api';
 import WeatherCard from '../WeatherCard/WeatherCard';
 import StockCard from '../StockCard/StockCard';
+import CryptoCard from '../CryptoCard/CryptoCard';
 import './Dashboard.css';
 
 const Dashboard = () => {
     // ── State ──
     const [weatherData, setWeatherData] = useState([]);
     const [stockData, setStockData] = useState([]);
+    const [cryptoData, setCryptoData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [lastUpdated, setLastUpdated] = useState(null);
@@ -30,13 +32,15 @@ const Dashboard = () => {
             setError(null);
 
             // Parallel fetch for better performance
-            const [weatherRes, stockRes] = await Promise.all([
+            const [weatherRes, stockRes, cryptoRes] = await Promise.all([
                 getAllWeather(),
                 getAllStocks(),
+                getAllCrypto(),
             ]);
 
             setWeatherData(weatherRes.data);
             setStockData(stockRes.data);
+            setCryptoData(cryptoRes.data);
             setLastUpdated(new Date().toLocaleTimeString());
         } catch (err) {
             setError(err.message || 'Failed to fetch data. Is the backend running?');
@@ -111,6 +115,19 @@ const Dashboard = () => {
                 <div className="dashboard__grid dashboard__grid--stocks">
                     {stockData.map((item) => (
                         <StockCard key={item.symbol} data={item} />
+                    ))}
+                </div>
+            </section>
+
+            {/* ── Crypto Section ── */}
+            <section className="dashboard__section">
+                <div className="dashboard__section-header">
+                    <h3 className="dashboard__section-title">🪙 Cryptocurrency API</h3>
+                    <span className="dashboard__endpoint">GET /api/v1/crypto/all</span>
+                </div>
+                <div className="dashboard__grid dashboard__grid--stocks">
+                    {cryptoData.map((item) => (
+                        <CryptoCard key={item.symbol} data={item} />
                     ))}
                 </div>
             </section>

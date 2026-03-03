@@ -14,7 +14,7 @@ const weatherService = require('../services/weather.service');
  * GET /api/v1/weather?city=London
  * Returns weather data for a single city.
  */
-const getWeather = (req, res, next) => {
+const getWeather = async (req, res, next) => {
     try {
         const { city } = req.query;
 
@@ -25,7 +25,13 @@ const getWeather = (req, res, next) => {
             throw error;
         }
 
-        const weatherData = weatherService.getWeatherByCity(city);
+        const weatherData = await weatherService.getWeatherByCity(city);
+
+        if (!weatherData) {
+            const error = new Error(`City "${city}" is not supported. Use GET /api/v1/weather/cities for available cities.`);
+            error.statusCode = 404;
+            throw error;
+        }
 
         res.status(200).json({
             success: true,
@@ -40,9 +46,9 @@ const getWeather = (req, res, next) => {
  * GET /api/v1/weather/all
  * Returns weather data for every supported city.
  */
-const getAllWeather = (req, res, next) => {
+const getAllWeather = async (req, res, next) => {
     try {
-        const allWeather = weatherService.getAllWeather();
+        const allWeather = await weatherService.getAllWeather();
 
         res.status(200).json({
             success: true,

@@ -11,7 +11,7 @@ import './StockCard.css';
 const StockCard = ({ data }) => {
     if (!data) return null;
 
-    const isUp = data.trend === 'up';
+    const isUp = data.change >= 0;
 
     return (
         <div className={`stock-card ${isUp ? 'stock-card--up' : 'stock-card--down'}`}>
@@ -29,10 +29,10 @@ const StockCard = ({ data }) => {
 
             {/* Price section */}
             <div className="stock-card__price-row">
-                <span className="stock-card__price">{data.price}</span>
+                <span className="stock-card__price">${data.price?.toFixed(2)}</span>
                 <div className={`stock-card__change ${isUp ? 'stock-card__change--up' : 'stock-card__change--down'}`}>
                     <span className="stock-card__arrow">{isUp ? '▲' : '▼'}</span>
-                    <span>{data.change} ({data.changePercent})</span>
+                    <span>{isUp ? '+' : ''}{data.change?.toFixed(2)} ({isUp ? '+' : ''}{data.changePercent?.toFixed(2)}%)</span>
                 </div>
             </div>
 

@@ -1,0 +1,68 @@
+# ============================================================================
+# WSO2 API Manager — Docker Compose
+# ============================================================================
+# Runs WSO2 API Manager 4.3.0 with all-in-one profile (Gateway + Publisher
+# + DevPortal + Key Manager) for local development.
+#
+# Ports:
+#   9443  — Carbon Management Console / Publisher / DevPortal (HTTPS)
+#   8243  — API Gateway (HTTPS)
+#   8280  — API Gateway (HTTP)
+#
+# Usage:
+#   docker-compose up -d
+#   Wait ~60-90 seconds for WSO2 to fully start.
+#   Access Publisher: https://localhost:9443/publisher  (admin/admin)
+#   Access DevPortal: https://localhost:9443/devportal  (admin/admin)
+# ============================================================================
+
+version: '3.8'
+
+services:
+
+  # ── WSO2 API Manager (All-in-One) ──
+  wso2-apim:
+    image: wso2/wso2am:4.3.0
+    container_name: wso2-apim
+    ports:
+      - "9443:9443"    # Management Console / Publisher / DevPortal
+      - "8243:8243"    # Gateway HTTPS
+      - "8280:8280"    # Gateway HTTP
+    environment:
+      - JAVA_OPTS=-Xms512m -Xmx1024m
+    volumes:
+      - ./conf/deployment.toml:/home/wso2carbon/wso2am-4.3.0/repository/conf/deployment.toml
+      - apim-data:/home/wso2carbon/wso2am-4.3.0/repository/database
+    healthcheck:
+      test: ["CMD", "curl", "-k", "-f", "https://localhost:9443/services/Version"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 90s
+    restart: unless-stopped
+    networks:
+      - wso2-network
+
+  # ── Express Backend (containerized for gateway routing) ──
+  backend-api:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: api-backend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - CORS_ORIGIN=http://localhost:5173
+    restart: unless-stopped
+    networks:
+      - wso2-network
+
+volumes:
+  apim-data:
+    driver: local
+
+networks:
+  wso2-network:
+    driver: bridge

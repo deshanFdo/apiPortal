@@ -27,6 +27,14 @@ const config = {
     // -- External API keys (for future real integrations) --
     WEATHER_API_KEY: process.env.WEATHER_API_KEY || '',
     STOCK_API_KEY: process.env.STOCK_API_KEY || '',
+
+    // -- WSO2 Integration --
+    WSO2_JWT_VALIDATION: process.env.WSO2_JWT_VALIDATION === 'true',
+    WSO2_APIM_GATEWAY_URL: process.env.WSO2_APIM_GATEWAY_URL || 'https://localhost:8243',
+    WSO2_APIM_PUBLISHER_URL: process.env.WSO2_APIM_PUBLISHER_URL || 'https://localhost:9443/publisher',
+    WSO2_APIM_DEVPORTAL_URL: process.env.WSO2_APIM_DEVPORTAL_URL || 'https://localhost:9443/devportal',
+    WSO2_ASGARDEO_BASE_URL: process.env.WSO2_ASGARDEO_BASE_URL || 'https://api.asgardeo.io/t/your_org_name',
+    WSO2_ASGARDEO_CLIENT_ID: process.env.WSO2_ASGARDEO_CLIENT_ID || '',
 };
 
 module.exports = config;

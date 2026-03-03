@@ -14,6 +14,7 @@ const config = require('./config');
 // ── Middleware ──
 const requestLogger = require('./middleware/requestLogger');
 const errorHandler = require('./middleware/errorHandler');
+const wso2JwtValidator = require('./middleware/wso2JwtValidator');
 
 // ── Route modules ──
 const weatherRoutes = require('./routes/weather.routes');
@@ -43,6 +44,9 @@ app.use(cors({
 // Log every incoming request
 app.use(requestLogger);
 
+// WSO2 JWT token validation (enabled via WSO2_JWT_VALIDATION=true env var)
+app.use(wso2JwtValidator);
+
 // ────────────────────────────────────────────────────────────────────────────
 // API ROUTES
 // ────────────────────────────────────────────────────────────────────────────
@@ -62,6 +66,7 @@ app.get(`${config.API_PREFIX}/health`, (req, res) => {
 // Mount domain-specific routes
 app.use(`${config.API_PREFIX}/weather`, weatherRoutes);
 app.use(`${config.API_PREFIX}/stocks`, stocksRoutes);
+app.use(`${config.API_PREFIX}/crypto`, cryptoRoutes);
 
 // ────────────────────────────────────────────────────────────────────────────
 // 404 HANDLER (must come after all valid routes)

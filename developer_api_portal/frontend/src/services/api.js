@@ -38,6 +38,10 @@ export const getStockBySymbol = (symbol) => fetchApi(`/stocks?symbol=${encodeURI
 export const getAllStocks = () => fetchApi('/stocks/all');
 export const getSupportedSymbols = () => fetchApi('/stocks/symbols');
 
+// ── Crypto API calls ──
+
+export const getAllCrypto = () => fetchApi('/crypto/all');
+
 // ── Health check ──
 
 export const getHealthStatus = () => fetchApi('/health');

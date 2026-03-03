@@ -1,0 +1,138 @@
+openapi: "3.0.3"
+info:
+  title: Weather API
+  description: |
+    Real-time weather data API powered by Open-Meteo.
+    Provides current weather conditions for 10 major global cities.
+    
+    **Published via WSO2 API Manager** with OAuth2 security and rate limiting.
+  version: "1.0.0"
+  contact:
+    name: Enterprise API Portal
+    url: https://github.com/deshanFdo/apiPortal
+
+servers:
+  - url: http://backend-api:3000/api/v1
+    description: Backend service (internal — routed through WSO2 Gateway)
+  - url: https://localhost:8243/weather/1.0.0
+    description: WSO2 API Gateway (external — use this URL)
+
+paths:
+  /weather:
+    get:
+      operationId: getWeatherByCity
+      summary: Get weather for a specific city
+      description: Returns current weather data including temperature, humidity, wind speed, and visibility.
+      parameters:
+        - name: city
+          in: query
+          required: true
+          description: City name (e.g., London, Tokyo, NewYork)
+          schema:
+            type: string
+            enum: [London, Tokyo, NewYork, Paris, Sydney, Dubai, Mumbai, Berlin, Toronto, Singapore]
+      responses:
+        '200':
+          description: Weather data retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/WeatherData'
+        '400':
+          description: Missing city parameter
+        '404':
+          description: City not supported
+
+  /weather/all:
+    get:
+      operationId: getAllWeather
+      summary: Get weather for all cities
+      description: Returns current weather data for all 10 supported cities in parallel.
+      responses:
+        '200':
+          description: All weather data retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  count:
+                    type: integer
+                    example: 10
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/WeatherData'
+
+  /weather/cities:
+    get:
+      operationId: getSupportedCities
+      summary: List supported cities
+      description: Returns the list of city names available for weather queries.
+      responses:
+        '200':
+          description: List of city names
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  count:
+                    type: integer
+                  data:
+                    type: array
+                    items:
+                      type: string
+
+components:
+  schemas:
+    WeatherData:
+      type: object
+      properties:
+        city:
+          type: string
+          example: London
+        temperature:
+          type: number
+          example: 18.5
+        condition:
+          type: string
+          example: Partly Cloudy
+        humidity:
+          type: integer
+          example: 65
+        windSpeed:
+          type: number
+          example: 12.3
+        visibility:
+          type: integer
+          example: 10
+        feelsLike:
+          type: integer
+          example: 17
+        lastUpdated:
+          type: string
+          format: date-time
+
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://localhost:9443/oauth2/token
+          scopes:
+            weather:read: Read weather data
+
+security:
+  - OAuth2:
+      - weather:read

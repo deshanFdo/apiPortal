@@ -1,0 +1,133 @@
+openapi: "3.0.3"
+info:
+  title: Stock Alert API
+  description: |
+    Real-time stock market data API with support for 10 major ticker symbols.
+    Falls back to simulated data when live market feeds are unavailable.
+    
+    **Published via WSO2 API Manager** with OAuth2 security and rate limiting.
+  version: "1.0.0"
+  contact:
+    name: Enterprise API Portal
+    url: https://github.com/deshanFdo/apiPortal
+
+servers:
+  - url: http://backend-api:3000/api/v1
+    description: Backend service (internal)
+  - url: https://localhost:8243/stocks/1.0.0
+    description: WSO2 API Gateway (external)
+
+paths:
+  /stocks:
+    get:
+      operationId: getStockBySymbol
+      summary: Get stock data for a specific symbol
+      parameters:
+        - name: symbol
+          in: query
+          required: true
+          description: Ticker symbol (e.g., AAPL, MSFT, GOOGL)
+          schema:
+            type: string
+            enum: [AAPL, MSFT, GOOGL, AMZN, TSLA, META, NVDA, JPM, V, WMT]
+      responses:
+        '200':
+          description: Stock data retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/StockData'
+        '400':
+          description: Missing symbol parameter
+        '404':
+          description: Symbol not supported
+
+  /stocks/all:
+    get:
+      operationId: getAllStocks
+      summary: Get stock data for all supported symbols
+      responses:
+        '200':
+          description: All stock data retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  count:
+                    type: integer
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/StockData'
+
+  /stocks/symbols:
+    get:
+      operationId: getSupportedSymbols
+      summary: List supported ticker symbols
+      responses:
+        '200':
+          description: List of symbols
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  count:
+                    type: integer
+                  data:
+                    type: array
+                    items:
+                      type: string
+
+components:
+  schemas:
+    StockData:
+      type: object
+      properties:
+        symbol:
+          type: string
+          example: AAPL
+        name:
+          type: string
+          example: Apple Inc.
+        sector:
+          type: string
+          example: Technology
+        price:
+          type: number
+          example: 175.50
+        change:
+          type: number
+          example: 2.35
+        changePercent:
+          type: number
+          example: 1.36
+        marketCap:
+          type: string
+          example: "2.8T"
+        lastUpdated:
+          type: string
+          format: date-time
+
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://localhost:9443/oauth2/token
+          scopes:
+            stocks:read: Read stock data
+
+security:
+  - OAuth2:
+      - stocks:read
