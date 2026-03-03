@@ -2,6 +2,15 @@
 
 A production-grade **API Management platform** built with **WSO2 API Manager**, **WSO2 Asgardeo**, **Node.js/Express**, and **React**. Demonstrates how enterprises expose, secure, and manage APIs through WSO2's product ecosystem.
 
+## Key Features
+
+- **API Gateway** — All API traffic routed through WSO2 API Manager with OAuth2, rate limiting, and analytics
+- **Identity Management** — User authentication via WSO2 Asgardeo (OpenID Connect / OAuth2)
+- **Developer Portal** — Built-in WSO2 portal for API discovery, subscription, and token generation
+- **Live Data** — Real-time Weather (Open-Meteo), Stock (Yahoo Finance), and Crypto (CoinGecko) APIs
+- **Containerized** — One-command Docker Compose setup for the entire WSO2 + backend stack
+- **OpenAPI 3.0** — All APIs have importable OpenAPI specs for WSO2 Publisher
+
 ---
 
 ## Architecture
@@ -49,41 +58,39 @@ A production-grade **API Management platform** built with **WSO2 API Manager**, 
 
 ```
 developer_api_portal/
-+-- backend/                          # Express API Server
-|   +-- src/
-|   |   +-- config/                   # Environment config (incl. WSO2 settings)
-|   |   +-- controllers/              # HTTP request/response handlers
-|   |   +-- middleware/
-|   |   |   +-- errorHandler.js       # Global error handler
-|   |   |   +-- requestLogger.js      # Request logging
-|   |   |   +-- wso2JwtValidator.js   # WSO2 JWT token validation
-|   |   +-- routes/                   # Weather, Stock, Crypto routes
-|   |   +-- services/                 # Business logic + external API calls
-|   +-- server.js                     # Entry point
-|   +-- Dockerfile                    # Container config for Docker Compose
-|   +-- .env.example                  # Environment template
-|   +-- package.json
-|
-+-- frontend/                         # React Dashboard
-|   +-- src/
-|   |   +-- config/
-|   |   |   +-- asgardeo.js           # WSO2 Asgardeo auth config
-|   |   +-- components/               # Header, Dashboard, Cards
-|   |   +-- services/                 # API client layer
-|   |   +-- styles/                   # Global styles
-|   +-- .env.example                  # Environment template
-|   +-- package.json
-|
-+-- wso2-gateway/                     # WSO2 API Manager Setup
-|   +-- docker-compose.yml            # Runs WSO2 APIM + backend
-|   +-- conf/
-|   |   +-- deployment.toml           # APIM configuration (CORS, JWT, Gateway)
-|   +-- api-definitions/              # OpenAPI specs for publishing
-|       +-- weather-api.yaml
-|       +-- stocks-api.yaml
-|       +-- crypto-api.yaml
-|
-+-- .gitignore
+├── backend/                          # Express API Server
+│   ├── src/
+│   │   ├── config/                   # Environment config (incl. WSO2 settings)
+│   │   ├── controllers/              # HTTP request/response handlers
+│   │   ├── middleware/
+│   │   │   ├── errorHandler.js       # Global error handler
+│   │   │   ├── requestLogger.js      # Request logging
+│   │   │   └── wso2JwtValidator.js   # WSO2 JWT token validation
+│   │   ├── routes/                   # Weather, Stock, Crypto routes
+│   │   └── services/                 # Business logic + external API calls
+│   ├── server.js                     # Entry point
+│   ├── Dockerfile                    # Container config for Docker Compose
+│   ├── .env.example                  # Environment template
+│   └── package.json
+│
+├── frontend/                         # React Dashboard
+│   ├── src/
+│   │   ├── config/
+│   │   │   └── asgardeo.js           # WSO2 Asgardeo auth config
+│   │   ├── components/               # Header, Dashboard, Cards
+│   │   ├── services/                 # API client layer
+│   │   └── styles/                   # Global styles
+│   ├── .env.example                  # Environment template
+│   └── package.json
+│
+└── wso2-gateway/                     # WSO2 API Manager Setup
+    ├── docker-compose.yml            # Runs WSO2 APIM + backend
+    ├── conf/
+    │   └── deployment.toml           # APIM config (CORS, JWT, Gateway)
+    └── api-definitions/              # OpenAPI specs for publishing
+        ├── weather-api.yaml
+        ├── stocks-api.yaml
+        └── crypto-api.yaml
 ```
 
 ---
@@ -100,7 +107,7 @@ developer_api_portal/
 
 ```bash
 git clone https://github.com/deshanFdo/apiPortal.git
-cd wso2product/developer_api_portal
+cd apiPortal/developer_api_portal
 
 # Backend
 cd backend
@@ -205,6 +212,13 @@ All endpoints are prefixed with `/api/v1`.
 | Identity | WSO2 Asgardeo (OAuth2 / OIDC) |
 | Containerization | Docker, Docker Compose |
 | Version Control | Git + GitHub |
+
+---
+
+## Screenshots
+
+> Run the project locally and visit `http://localhost:5173` to see the dashboard.
+> WSO2 Publisher portal is at `https://localhost:9443/publisher` and DevPortal at `https://localhost:9443/devportal`.
 
 ---
 

@@ -159,3 +159,6 @@ ehthumbs.db
 .fusebox/
 .dynamodb/
 .tern-port
+
+# Local-only documentation
+USER_GUIDE.md
